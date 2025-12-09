@@ -1,0 +1,281 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="initial-scale=1.0, user-scalable=no, width=device-width">
+  <title>南华大学建筑分布</title>
+  <style>
+    html, body, #container {
+      height: 100%;
+      width: 100%;
+      margin: 0;
+    }
+
+    /* 图例样式 */
+    .legend {
+      position: absolute;
+      bottom: 20px;
+      right: 20px;
+      z-index: 1000;
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      padding: 10px 15px;
+      font-family: "Microsoft YaHei", sans-serif;
+      font-size: 12px;
+    }
+    .legend-title {
+      font-weight: 500;
+      color: #333;
+      margin-bottom: 8px;
+      text-align: center;
+    }
+    .legend-item {
+      display: flex;
+      align-items: center;
+      margin: 4px 0;
+      color: #555;
+    }
+    .legend-color {
+      width: 12px;
+      height: 12px;
+      border-radius: 3px;
+      margin-right: 8px;
+    }
+
+    /* 清除高德默认标签样式 */
+    .amap-marker-label{
+      border: 0;
+      background-color: transparent;
+    }
+
+    /* 1. 三省园宿舍：浅蓝+虚线 */
+    .info-dorm-sanshengyuan {
+      font-size: 11px;
+      color: #2E5EAA;
+      font-family: "Microsoft YaHei", sans-serif;
+      padding: 4px 8px;
+      border-radius: 4px;
+      background-color: #E8F3FF;
+      border: 1px dashed #99BEF9;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+    }
+
+    /* 2. 笃行园宿舍：浅绿+虚线 */
+    .info-dorm-duxingyuan {
+      font-size: 11px;
+      color: #2A7D4F;
+      font-family: "Microsoft YaHei", sans-serif;
+      padding: 4px 8px;
+      border-radius: 4px;
+      background-color: #E8FFF3;
+      border: 1px dashed #99F9C3;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+    }
+
+    /* 3. 尚学园宿舍：浅紫+虚线 */
+    .info-dorm-shangxueyuan {
+      font-size: 11px;
+      color: #6B4E9E;
+      font-family: "Microsoft YaHei", sans-serif;
+      padding: 4px 8px;
+      border-radius: 4px;
+      background-color: #F5F0FF;
+      border: 1px dashed #D3BFFF;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+    }
+
+    /* 4. 食堂：橙色+实线（加粗突出） */
+    .info-canteen {
+      font-size: 11px;
+      color: #D96C00;
+      font-family: "Microsoft YaHei", sans-serif;
+      padding: 4px 8px;
+      border-radius: 4px;
+      background-color: #FFF2E8;
+      border: 1px solid #FFB78F;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+      font-weight: 500;
+    }
+
+    /* 5. 学院/教学楼：蓝色+实线 */
+    .info-college {
+      font-size: 11px;
+      color: #1E88E5;
+      font-family: "Microsoft YaHei", sans-serif;
+      padding: 4px 8px;
+      border-radius: 4px;
+      background-color: #E3F2FD;
+      border: 1px solid #90CAF9;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+    }
+
+    /* 6. 公共设施：灰色+细边框 */
+    .info-public {
+      font-size: 11px;
+      color: #595959;
+      font-family: "Microsoft YaHei", sans-serif;
+      padding: 4px 8px;
+      border-radius: 4px;
+      background-color: #F5F5F5;
+      border: 1px solid #E0E0E0;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+    }
+
+    /* 7. 快递点：红色+实线（加粗突出） */
+    .info-express {
+      font-size: 11px;
+      color: #D32F2F;
+      font-family: "Microsoft YaHei", sans-serif;
+      padding: 4px 8px;
+      border-radius: 4px;
+      background-color: #FFEBEE;
+      border: 1px solid #EF9A9A;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+      font-weight: 500;
+    }
+  </style>
+</head>
+<body>
+<div id="container"></div>
+<!-- 图例控件 -->
+<div class="legend">
+  <div class="legend-title">建筑类型图例</div>
+  <div class="legend-item"><div class="legend-color" style="background:#E8F3FF;border:1px dashed #99BEF9;"></div>三省园宿舍</div>
+  <div class="legend-item"><div class="legend-color" style="background:#E8FFF3;border:1px dashed #99F9C3;"></div>笃行园宿舍</div>
+  <div class="legend-item"><div class="legend-color" style="background:#F5F0FF;border:1px dashed #D3BFFF;"></div>尚学园宿舍</div>
+  <div class="legend-item"><div class="legend-color" style="background:#FFF2E8;border:1px solid #FFB78F;"></div>食堂</div>
+  <div class="legend-item"><div class="legend-color" style="background:#E3F2FD;border:1px solid #90CAF9;"></div>学院/教学楼</div>
+  <div class="legend-item"><div class="legend-color" style="background:#F5F5F5;border:1px solid #E0E0E0;"></div>公共设施</div>
+  <div class="legend-item"><div class="legend-color" style="background:#FFEBEE;border:1px solid #EF9A9A;"></div>快递点</div>
+</div>
+
+<!-- 高德地图 API -->
+<script type="text/javascript" src="https://webapi.amap.com/maps?v=2.0&key=*******************"></script>
+
+<script>
+  // 创建地图
+  var map = new AMap.Map('container', {
+    zoom: 16,
+    center: [112.516932, 26.880616], // 南华大学中心点
+    viewMode: '3D',
+    showLabel: false,
+    mapStyle: 'amap://styles/normal',
+    dragEnable: true,
+    touchZoom: true,
+    pinchZoom: true,
+    // 高德地图缓存配置
+    cacheEnabled: true,
+    cacheSize: 50, // 50MB 缓存
+    cacheExpire: 7 * 24 * 60 * 60 * 1000, // 7天过期
+  });
+
+  // 所有建筑数据（已添加类型标识）
+  var buildings = [
+    // 三省园宿舍区
+    { name: "三省园 6 栋", position: [112.515282,26.883972], type: "dorm_sanshengyuan" },
+    { name: "三省园 7 栋", position: [112.513692,26.883552], type: "dorm_sanshengyuan" },
+    { name: "三省园 4 栋", position: [112.515513,26.883171], type: "dorm_sanshengyuan" },
+    { name: "三省园 3 栋", position: [112.514649,26.88298], type: "dorm_sanshengyuan" },
+    { name: "三省园 2 栋", position: [112.513939,26.88285], type: "dorm_sanshengyuan" },
+    { name: "三省园 1 栋", position: [112.513306,26.882561], type: "dorm_sanshengyuan" },
+    { name: "三省园 5 栋", position: [112.511578,26.882431], type: "dorm_sanshengyuan" },
+    { name: "三省园食堂", position: [112.512493,26.882309], type: "canteen" },
+
+    // 笃行园宿舍区
+    { name: "笃行园 2 栋", position: [112.51933,26.88237], type: "dorm_duxingyuan" },
+    { name: "笃行园 1 栋", position: [112.51848,26.882372], type: "dorm_duxingyuan" },
+    { name: "笃行园 4 栋", position: [112.51932,26.883023], type: "dorm_duxingyuan" },
+    { name: "笃行园 3 栋", position: [112.518474,26.883037], type: "dorm_duxingyuan" },
+    { name: "笃行园 5 栋", position: [112.517663,26.884406], type: "dorm_duxingyuan" },
+    { name: "笃行园食堂", position: [112.51924,26.881324], type: "canteen" },
+
+    // 尚学园宿舍区
+    { name: "尚学园 6 栋", position: [112.516197,26.877653], type: "dorm_shangxueyuan" },
+    { name: "尚学园 4 栋", position: [112.517761,26.877636], type: "dorm_shangxueyuan" },
+    { name: "尚学园 1 栋", position: [112.518328,26.878307], type: "dorm_shangxueyuan" },
+
+    // 学院/教学楼
+    { name: "机械学院", position: [112.513841,26.881716], type: "college" },
+    { name: "计算机学院", position: [112.513911,26.881254], type: "college" },
+    { name: "电器学院", position: [112.512684,26.88091], type: "college" },
+    { name: "数理学院", position: [112.518777,26.881648], type: "college" },
+    { name: "马院", position: [112.518781,26.881448], type: "college" },
+    { name: "松霖建筑与艺术学院", position: [112.517574,26.880721], type: "college" },
+    { name: "语言文学学院", position: [112.51796,26.881632], type: "college" },
+    { name: "经管法2号", position: [112.518545,26.880889], type: "college" },
+    { name: "经管法1号", position: [112.518579,26.880441], type: "college" },
+    { name: "老二教", position: [112.517,26.877444], type: "college" },
+
+    // 公共设施
+    { name: "医务室", position: [112.514717,26.881135], type: "public" },
+    { name: "大学生活动中心", position: [112.515382,26.881235], type: "public" },
+    { name: "图书馆", position: [112.515717,26.880071], type: "public" },
+    { name: "雨母楼", position: [112.516339,26.878807], type: "public" },
+    { name: "逸夫楼", position: [112.515565,26.878051], type: "public" },
+    { name: "校史馆", position: [112.517583,26.878317], type: "public" },
+    { name: "老图书馆", position: [112.51679,26.877787], type: "public" },
+    { name: "慎行楼", position: [112.516232,26.877092], type: "public" },
+    { name: "新校区大门", position: [112.516417,26.875142], type: "public" },
+    { name: "新校区东门(桥洞)", position: [112.52072,26.882015], type: "public" },
+    { name: "镜湖", position: [112.517035,26.880058], type: "public" },
+    { name: "性感大天鹅停靠点", position: [112.517965,26.87986], type: "public" },
+    { name: "运动场", position: [112.519986,26.881535], type: "public" },
+    { name: "田径场", position: [112.520281,26.883122], type: "public" },
+    { name: "建设银行", position: [112.517714,26.88405], type: "public" },
+    { name: "三大运营商", position: [112.51735,26.884192], type: "public" },
+
+    // 快递点
+    { name: "顺丰", position: [112.511937,26.88132], type: "express" },
+    { name: "菜鸟驿站,京东快递,邮政快递", position: [112.514631,26.882866], type: "express" },
+    { name: "桥洞菜鸟驿站", position: [112.521439,26.882352], type: "express" },
+    { name: "韵达快递", position: [112.522095,26.880296], type: "express" },
+    { name: "妈妈驿站", position: [112.521972,26.880614], type: "express" },
+    { name: "极兔快递", position: [112.522155,26.880691], type: "express" }
+  ];
+
+  // 1. 根据类型匹配样式类名
+  function getStyleClass(type) {
+    switch(type) {
+      case "dorm_sanshengyuan": return "info-dorm-sanshengyuan";
+      case "dorm_duxingyuan": return "info-dorm-duxingyuan";
+      case "dorm_shangxueyuan": return "info-dorm-shangxueyuan";
+      case "canteen": return "info-canteen";
+      case "college": return "info-college";
+      case "public": return "info-public";
+      case "express": return "info-express";
+      default: return "info-public";
+    }
+  }
+
+  // 2. 为每个建筑创建label（不创建marker）
+  buildings.forEach(function(building) {
+    // 创建marker但不显示图标
+    var marker = new AMap.Marker({
+      position: building.position,
+      icon: new AMap.Icon({
+        size: new AMap.Size(0, 0), // 设置图标大小为0，不显示
+        image: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg==', // 透明图片
+        imageSize: new AMap.Size(0, 0)
+      }),
+      anchor: 'center',
+      offset: new AMap.Pixel(0, 0)
+    });
+
+    // 设置鼠标划过点标记显示的文字提示
+    marker.setTitle(building.name);
+
+    // 设置label标签，使用对应的样式类
+    marker.setLabel({
+      direction: 'center',
+      offset: new AMap.Pixel(0, 0),  // 设置文本标注偏移量
+      content: "<div class='" + getStyleClass(building.type) + "'>" + building.name + "</div>", // 使用对应的样式类
+    });
+
+    // 将marker添加到地图
+    marker.setMap(map);
+  });
+</script>
+</body>
+</html>
